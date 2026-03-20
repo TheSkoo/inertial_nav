@@ -27,7 +27,8 @@ class MainActivity : FlutterActivity(), SensorEventListener
         mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         if (mAccelerometer != null) {
-            mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+           // mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+            mSensorManager.registerListener(this, mAccelerometer, 1000000)
         }
     }
 
@@ -37,16 +38,15 @@ class MainActivity : FlutterActivity(), SensorEventListener
         getAccelerations?.destroy()
     }
     override fun onSensorChanged(event: SensorEvent?) {
-        var x = 1.0
-        x = x * 1.3
-               if (event != null) {
-                   if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
-                       val x = event.values[0].toDouble()
-                       val y = event.values[1].toDouble()
-                       val z = event.values[2].toDouble()
-                       getAccelerations?.LogAccels(1, x, y, z)
-                   }
-               }
+        val currentTimestamp = System.currentTimeMillis()
+       if (event != null) {
+           if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+               val x = event.values[0].toDouble()
+               val y = event.values[1].toDouble()
+               val z = event.values[2].toDouble()
+               getAccelerations?.LogAccels(currentTimestamp, x, y, z)
+           }
+       }
     }
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         var x = 1.0

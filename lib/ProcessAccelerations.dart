@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 class ProcessAccelerations {
   static const MethodChannel _channel = MethodChannel('flutter.native/helper');
   static const String logURL = "http://192.168.50.89:778/AndroidAccelerations";
-  static BigInt lastMillisecond = BigInt.parse("0");
+  static BigInt lastMillisecond = BigInt.zero;
+  
   void Initialize() {
     _channel.setMethodCallHandler(nativeMethodCallHandler);
   }
@@ -13,23 +14,30 @@ class ProcessAccelerations {
     switch (methodCall.method) {
       case "processData":
         // Handle the method call from Android
-        final Map<String, dynamic>? accelData = methodCall.arguments.cast<String, dynamic>();
-      if (accelData != null && lastMillisecond != BigInt.parse("0")) {
-        var p1 = BigInt.parse(accelData['ts'].toString()) - lastMillisecond;
-        var p2 = double.parse(accelData['x'].toString());
-        var p3 = double.parse(accelData['y'].toString());
-        var p4 = double.parse(accelData['z'].toString());
-        lastMillisecond = BigInt.parse(accelData['ts'].toString());
-        Log(p1, p2, p3, p4);
-      }
-      else {
-        if (accelData == null)
-        {
+        final Map<dynamic, dynamic>? args = methodCall.arguments as Map<dynamic, dynamic>?;
+        if (args == null) {
           LogSquat("accelData is null");
+          return;
         }
-        lastMillisecond = BigInt.parse(accelData['ts'].toString());
-      }
+        
+        final Map<String, dynamic> accelData = args.cast<String, dynamic>();
+        
+        if (lastMillisecond != BigInt.zero) {
+          var p1 = BigInt.parse(accelData['ts'].toString()) - lastMillisecond;
+          var p2 = double.parse(accelData['x'].toString());
+          var p3 = double.parse(accelData['y'].toString());
+          var p4 = double.parse(accelData['z'].toString());
+          LogSquat(lastMillisecond.toString() + ": " + accelData['ts'].toString());
 
+          lastMillisecond = BigInt.parse(accelData['ts'].toString());
+          Log(p1, p2, p3, p4);
+
+          //LogSquat(lastMillisecond.toString());
+        }
+        else {
+          lastMillisecond = BigInt.parse(accelData['ts'].toString());
+        }
+        break;
       default:
         throw MissingPluginException('Not implemented');
     }
@@ -37,7 +45,7 @@ class ProcessAccelerations {
 
 void LogSquat(String message) {
   http.post(
-    Uri.parse("http://192.168.50.89:778/AndroidLog?logMessage=" + message),
+    Uri.parse("http://192.168.50.89:778/AndroidLog?logMessage=${Uri.encodeComponent(message)}"),
     headers: {'Content-Type': 'application/json; charset=UTF-8'},
   ).then((resp) {
     print(resp.body);
