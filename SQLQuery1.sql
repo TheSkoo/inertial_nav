@@ -1,12 +1,8 @@
-SELECT TOP (1000) [pkID]
-      ,[Timestamp]
-      ,[X]
-      ,[Y]
-      ,[Z]
-  FROM [AndroidLogger].[dbo].[Accelerations]
-
+SELECT *  FROM [AndroidLogger].[dbo].[Accelerations]
+select * from [Log]
 
 
 
   delete from [Accelerations]
   delete from [Log]
+
