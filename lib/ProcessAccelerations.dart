@@ -27,10 +27,11 @@ class ProcessAccelerations {
           var p2 = double.parse(accelData['x'].toString());
           var p3 = double.parse(accelData['y'].toString());
           var p4 = double.parse(accelData['z'].toString());
-          LogSquat(lastMillisecond.toString() + ": " + accelData['ts'].toString());
+          //LogSquat(lastMillisecond.toString() + ": " + accelData['ts'].toString());
 
           lastMillisecond = BigInt.parse(accelData['ts'].toString());
-          Log(p1, p2, p3, p4);
+          final mSec = p1.toDouble() / 1000000.0;
+          Log(p1, p2, p3, p4, mSec);
 
           //LogSquat(lastMillisecond.toString());
         }
@@ -52,9 +53,9 @@ void LogSquat(String message) {
   });
 }
 
-void Log(BigInt timeStamp, double x, double y, double z) {
+void Log(BigInt timeStamp, double x, double y, double z, double mSec) {
   http.post(
-    Uri.parse("$logURL?timeStamp=$timeStamp&x=$x&y=$y&z=$z"),
+    Uri.parse("$logURL?timeStamp=$timeStamp&x=$x&y=$y&z=$z&milliSeconds=$mSec"),
     headers: {'Content-Type': 'application/json; charset=UTF-8'},
   ).then((resp) {
     print(resp.body);

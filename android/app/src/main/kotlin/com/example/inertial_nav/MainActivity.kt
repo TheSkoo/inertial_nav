@@ -25,10 +25,10 @@ class MainActivity : FlutterActivity(), SensorEventListener
         getAccelerations = GetAccels(applicationContext, flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
         getAccelerations?.TestChannel()
         mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
         if (mAccelerometer != null) {
            // mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
-            mSensorManager.registerListener(this, mAccelerometer, 1000000)
+            mSensorManager.registerListener(this, mAccelerometer, 200000)
         }
     }
 
@@ -38,13 +38,12 @@ class MainActivity : FlutterActivity(), SensorEventListener
         getAccelerations?.destroy()
     }
     override fun onSensorChanged(event: SensorEvent?) {
-        val currentTimestamp = System.currentTimeMillis()
        if (event != null) {
-           if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+           if (event.sensor.type == Sensor.TYPE_LINEAR_ACCELERATION) {
                val x = event.values[0].toDouble()
                val y = event.values[1].toDouble()
                val z = event.values[2].toDouble()
-               getAccelerations?.LogAccels(currentTimestamp, x, y, z)
+               getAccelerations?.LogAccels(event.timestamp, x, y, z)
            }
        }
     }
