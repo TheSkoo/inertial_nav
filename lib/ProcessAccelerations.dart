@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http; // Alias the package for convenience
 import 'package:flutter/services.dart';
+import 'dart:math' as math;
 
 class ProcessAccelerations {
   static const MethodChannel _channel = MethodChannel('flutter.native/helper');
@@ -12,7 +13,13 @@ class ProcessAccelerations {
   static double positionX = 0.0;
   static double positionY = 0.0;
   static double positionZ = 0.0;
-    
+  static double deltaVx = 0.0;
+  static double previousAx = 0.0;
+
+  double PositionX = 0.0;
+  double PositionY = 0.0;
+  double PositionZ = 0.0;
+
   void Initialize() {
     _channel.setMethodCallHandler(nativeMethodCallHandler);
   }
@@ -37,7 +44,7 @@ class ProcessAccelerations {
 
           lastMillisecond = BigInt.parse(accelData['ts'].toString());
           final mSec = p1.toDouble() / 1000000.0;
-          Log(p1, p2, p3, p4, mSec);
+          //Log(p1, p2, p3, p4, mSec);
           integrateAccelerations(mSec, p2, p3, p4);
         }
         else {
@@ -49,37 +56,48 @@ class ProcessAccelerations {
     }
   }
 
+var isRunning = false;
 void integrateAccelerations(double mSec, double x, double y, double z) {
+  if (isRunning) {
+    LogSquat("ReEntered");
+  }
+
+  isRunning = true;
+  try{
   double seconds = mSec / 1000.0;
 
-  double deltaVx = x * seconds;
+  deltaVx = (((x + previousAx) / 2.0) - 0.0012145351910708) * seconds;
+  previousAx = x;
+
   double deltaVy = y * seconds;
   double deltaVz = z * seconds;
+ 
   velocityX += deltaVx;
   velocityY += deltaVy;
   velocityZ += deltaVz;
-  var msg = "deltaVx = " + deltaVx.toString() + ": velocityX = " + velocityX.toString();
-  LogSquat(msg);
-  msg = "deltaVy = " + deltaVy.toString() + ": velocityY = " + velocityY.toString();
-  LogSquat(msg);
-  msg = "deltaVz = " + deltaVz.toString() + ": velocityZ = " + velocityZ.toString();
-  LogSquat(msg);
-  
+    
   double deltaPx = velocityX * seconds;
   double deltaPy = velocityY * seconds;
   double deltaPz = velocityZ * seconds;
   positionX += deltaPx;
   positionY += deltaPy;
   positionZ += deltaPz;
-  msg = "deltaPx = " + deltaPx.toString() + ": positionX = " + positionX.toString();
-  LogSquat(msg);
-  msg = "deltaPy = " + deltaPy.toString() + ": positionY = " + positionY.toString();
-  LogSquat(msg);
-  msg = "deltaPz = " + deltaPz.toString() + ": positionZ = " + positionZ.toString();
-  LogSquat(msg);
+  
+   PositionX = positionX;
+   PositionY = convertPosition(positionY);
+   PositionZ = convertPosition(positionZ);
+   Log(BigInt.from(mSec.toInt()), x, deltaVx, velocityX, seconds);
+}
+finally {
+isRunning = false;
+}
+  }
 
-  LogSquat("");
- }
+double convertPosition(double pos) {
+  var result = pos * 39.3701;
+  result = (result * math.pow(10, 2)).truncate() / math.pow(10, 2);
+  return result;
+}
 
 void LogSquat(String message) {
   http.post(

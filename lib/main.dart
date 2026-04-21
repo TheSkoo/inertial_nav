@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './LogMessages.dart'; 
 import './ProcessAccelerations.dart'; 
-
+import 'package:quiver/async.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -56,10 +56,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _x = 1;
-  int _y = 2;
-  int _z = 3;
+  double x = 1;
+  double y = 2;
+  double z = 3;
   var pa;
+
 _MyHomePageState() {
   pa = ProcessAccelerations();
   pa.Initialize();
@@ -71,11 +72,14 @@ _MyHomePageState() {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _x++;
-      _y++;
-      _z++;
-      var logger = LogMessage();
-      logger.Log("MainDart._MyHomePageState._incrementCounter() says hi");   
+      x = pa.PositionX;
+      y = pa.PositionY;
+      z = pa.PositionZ;
+//      x++;
+//      y++;
+//      z++;
+//      var logger = LogMessage();
+//      logger.Log("MainDart._MyHomePageState._incrementCounter() says hi");   
      });
   }
 
@@ -102,17 +106,17 @@ _MyHomePageState() {
         children: <Widget>[
           const Text("X:"),
           Text(
-            '$_x',
+            '$x',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const Text("Y:"),
           Text(
-            '$_y',
+            '$y',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const Text("Z:"),
           Text(
-            '$_z',
+            '$z',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ],
