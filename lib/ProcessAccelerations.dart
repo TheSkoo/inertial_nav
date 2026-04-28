@@ -26,6 +26,7 @@ class ProcessAccelerations {
 
   void Initialize() {
     _channel.setMethodCallHandler(nativeMethodCallHandler);
+    LogSquat("Initialized ProcessAccelerations");
   }
 
   Future<dynamic> nativeMethodCallHandler(MethodCall methodCall) async {
@@ -47,12 +48,12 @@ class ProcessAccelerations {
           var ay = double.parse(accelData['y'].toString());
           var az = double.parse(accelData['z'].toString());
 
-          lastMillisecond = BigInt.parse(accelData['ts'].toString());
           final mSec = p1.toDouble() / 1000000.0;
           integrateAccelerations(mSec, ax, xAxis);
-          Log(p1, ax, ay, az, mSec);
+          Log(p1, ax, ay, p1.toDouble(), p1.toDouble());
           integrateAccelerations(mSec, ay, yAxis);
           integrateAccelerations(mSec, az, zAxis);
+          lastMillisecond = BigInt.parse(accelData['ts'].toString());
         }
         else {
           lastMillisecond = BigInt.parse(accelData['ts'].toString());
