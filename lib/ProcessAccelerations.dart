@@ -7,7 +7,7 @@ class ProcessAccelerations {
   static const MethodChannel _channel = MethodChannel('flutter.native/helper');
   static const String logURL = "http://192.168.50.89:778/AndroidAccelerations";
   static BigInt lastMillisecond = BigInt.zero;
-
+ 
   var xAxis = AxisValues();
   var yAxis = AxisValues();
   var zAxis = AxisValues();
@@ -40,24 +40,22 @@ class ProcessAccelerations {
         }
         
         final Map<String, dynamic> accelData = args.cast<String, dynamic>();
+        final BigInt currentTs = BigInt.parse(accelData['ts'].toString());
         
         if (lastMillisecond != BigInt.zero) {
-          var p1 = BigInt.parse(accelData['ts'].toString()) - lastMillisecond;
-          LogSquat("squatly");
+          var p1 = currentTs - lastMillisecond;
+          //LogSquat("squatly");
           var ax = double.parse(accelData['x'].toString());
           var ay = double.parse(accelData['y'].toString());
           var az = double.parse(accelData['z'].toString());
 
           final mSec = p1.toDouble() / 1000000.0;
           integrateAccelerations(mSec, ax, xAxis);
-          Log(p1, ax, ay, p1.toDouble(), p1.toDouble());
+          Log(currentTs, ax, ay, az, mSec);
           integrateAccelerations(mSec, ay, yAxis);
           integrateAccelerations(mSec, az, zAxis);
-          lastMillisecond = BigInt.parse(accelData['ts'].toString());
         }
-        else {
-          lastMillisecond = BigInt.parse(accelData['ts'].toString());
-        }
+        lastMillisecond = currentTs;
         break;
       default:
         throw MissingPluginException('Not implemented');
