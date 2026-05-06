@@ -56,14 +56,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double x = 1;
-  double y = 2;
-  double z = 3;
-  var pa;
+  double _x = 1;
+  double _y = 2;
+  double _z = 3;
+  var _pa;
+  var _programState = _pa.calibrating ? "Calibrating" : "Running";
 
 _MyHomePageState() {
-  pa = ProcessAccelerations();
-  pa.Initialize();
+  _pa = ProcessAccelerations();
+  _pa.Initialize();
 }
   void _incrementCounter() {
     setState(() {
@@ -72,14 +73,10 @@ _MyHomePageState() {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      x = pa.PositionX;
-      y = pa.PositionY;
-      z = pa.PositionZ;
-//      x++;
-//      y++;
-//      z++;
-//      var logger = LogMessage();
-//      logger.Log("MainDart._MyHomePageState._incrementCounter() says hi");   
+      _x = _pa.xAxis.position;
+      _y = _pa.yAxis.position;
+      _z = _pa.zAxis.position;
+      programState = _pa.calibrating ? "Calibrating" : "Running";
      });
   }
 
@@ -101,12 +98,14 @@ _MyHomePageState() {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Row(
+  body: Column(
+    children: <Widget>[
+      Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           const Text("X:"),
           Text(
-            '$x',
+            '$_x',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const Text("Y:"),
@@ -116,11 +115,21 @@ _MyHomePageState() {
           ),
           const Text("Z:"),
           Text(
-            '$z',
+            '$_z',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ],
       ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text(_programState,
+          style: Theme.of(context).textTheme.headlineMedium,),
+        ],
+      ),
+    ],
+  ),
+      
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
