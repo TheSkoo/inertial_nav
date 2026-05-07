@@ -56,31 +56,46 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double x = 1;
-  double y = 2;
-  double z = 3;
-  var pa;
+  double _x = 0;
+  double _y = 0;
+  double _z = 0;
+  String _xStr  = "";
+  String _yStr = "";
+  String _zStr = "";
+  late ProcessAccelerations _pa;
+  late String _programState;
 
-_MyHomePageState() {
-  pa = ProcessAccelerations();
-  pa.Initialize();
-}
-  void _incrementCounter() {
+  @override
+  void initState() {
+    super.initState();
+    _pa = ProcessAccelerations();
+    _pa.Initialize();
+    _programState = _pa.calibrating ? "Calibrating" : "Running";
+    _pa.addListener(_onPaChanged);
+  }
+
+  @override
+  void dispose() {
+    _pa.removeListener(_onPaChanged);
+    _pa.dispose();
+    super.dispose();
+  }
+
+  void _onPaChanged() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      x = pa.PositionX;
-      y = pa.PositionY;
-      z = pa.PositionZ;
-//      x++;
-//      y++;
-//      z++;
-//      var logger = LogMessage();
-//      logger.Log("MainDart._MyHomePageState._incrementCounter() says hi");   
-     });
+      _x = _pa.xAxis.position;
+      _y = _pa.yAxis.position;
+      _z = _pa.zAxis.position;
+      _xStr = _x.toStringAsFixed(1);
+      _yStr = _y.toStringAsFixed(1);
+      _zStr = _z.toStringAsFixed(1);
+      _programState = _pa.calibrating ? "Calibrating" : "Running";
+    });
+  }
+
+  void _incrementCounter() {
+    // This now just triggers a manual update if needed, but the listener handles real-time data.
+    _onPaChanged();
   }
 
   @override
@@ -101,26 +116,38 @@ _MyHomePageState() {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Row(
+  body: Column(
+    children: <Widget>[
+      Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           const Text("X:"),
           Text(
-            '$x',
+            '$_xStr',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const Text("Y:"),
           Text(
-            '$y',
+            '$_yStr',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
-          const Text("Z:"),
+          /*const Text("Z:"),
           Text(
-            '$z',
+            '$_zStr',
             style: Theme.of(context).textTheme.headlineMedium,
-          ),
+          ),*/
         ],
       ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text(_programState,
+          style: Theme.of(context).textTheme.headlineMedium,),
+        ],
+      ),
+    ],
+  ),
+      
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',

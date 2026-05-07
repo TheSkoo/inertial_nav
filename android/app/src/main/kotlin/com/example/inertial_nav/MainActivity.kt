@@ -19,8 +19,6 @@ class MainActivity : FlutterActivity(), SensorEventListener
     private lateinit var mSensorManager : SensorManager
     private var mAccelerometer : Sensor ?= null
 
-    private var sequence: Long = 0
-
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         // Your existing MethodChannel setup or other configurations
@@ -47,8 +45,6 @@ class MainActivity : FlutterActivity(), SensorEventListener
                val y = event.values[1].toDouble()
                val z = event.values[2].toDouble()
                getAccelerations?.LogAccels(event.timestamp, x, y, z)
-               //getAccelerations?.LogAccels(sequence, x, y, z)
-               sequence = sequence + 1;
            }
        }
     }
