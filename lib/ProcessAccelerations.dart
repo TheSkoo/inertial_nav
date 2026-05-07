@@ -24,14 +24,15 @@ class ProcessAccelerations extends ChangeNotifier {
   void integrateAccelerations(double mSec, double acceleration, AxisValues axisValues) {
     double seconds = mSec / 1000.0;
 
-    double deltaV = ((acceleration + axisValues.previousAcceleration) / 2.0) * seconds;
+    double deltaV = acceleration * seconds;
+    //double deltaV = ((acceleration + axisValues.previousAcceleration) / 2.0) * seconds;
     axisValues.previousAcceleration = acceleration;
 
     axisValues.velocity += deltaV;
     
-  double deltaP = axisValues.velocity * seconds;
+  double deltaP = convertPosition(axisValues.velocity * seconds);
   axisValues.position += deltaP;
-}
+  }
 
   void Initialize() {
     _channel.setMethodCallHandler(nativeMethodCallHandler);
