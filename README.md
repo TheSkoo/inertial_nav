@@ -1,6 +1,6 @@
 # inertial_nav
 
-This project attempting to use the x and y accelerometers in a phone to measure the sway of a tall bulding on windy days.
+This project is attempting to use the x and y accelerometers in a phone to measure the sway of a tall bulding on windy days.
 A friend of mine who lives on the 30th floor of a condo building mentioned that how on a windy day he can't keep pictures hanging on walls level due to sway.
 This reminded me of when I worked on the 28th floor of a 56 floor skyscraper and standing in front of the elevators how I could hear the building creaking as it swayed back and forth.
 It swayed with roughly a 6 to 8 second period, It wasn't enough to physically notice.
