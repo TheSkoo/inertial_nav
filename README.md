@@ -5,6 +5,10 @@ A friend of mine who lives on the 30th floor of a condo building mentioned that 
 This reminded me of when I worked on the 28th floor of a 56 floor skyscraper and standing in front of the elevators how I could hear the building creaking as it swayed back and forth.
 It swayed with roughly a 6 to 8 second period, It wasn't enough to physically notice.
 
+This project is a good opportunity for me to learn Dart/Flutter and Android studio for development.
+I'm posting to a web Api on my local machne hosted under IIS to log captured and calculated values in a SQL Server database, the AndroidLogger project.
+Given that I expect the period of oscillations to be around 6 to 8 seconds and a displacement of 6 inches or less I've chosen to sample the sensors at a 5hz rate.
+
 So my plan is to use the phone accelerometers like inertial navigation systems to calculate position on the Earth.
 Given that integrating acceleration with respect to time yields delat velocity and then integrating velocity with respct to time gives changes in position it is possible to measure the horizontal displacement of the phone and therefore building sway.
 Some hurdles facing this application are
